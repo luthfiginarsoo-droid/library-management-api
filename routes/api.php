@@ -1,8 +1,6 @@
-<?php
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+    // Categories CRUD
+    Route::apiResource('categories', CategoryController::class);
+});
