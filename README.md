@@ -8,7 +8,7 @@ A robust, secure, and production-ready RESTful API for managing library resource
 
 ---
 
-## 🌟 Key Features
+##  Key Features
 
 1. **Authentication (Laravel Sanctum)**
    - User Registration & Login with Bearer Token generation.
@@ -36,7 +36,7 @@ A robust, secure, and production-ready RESTful API for managing library resource
 
 ---
 
-## 🏗️ Architecture & Database Schema
+## Architecture & Database Schema
 
 ```
 [ users ] 1 --- * [ borrowings ] * --- 1 [ books ] * --- 1 [ categories ]
@@ -49,7 +49,7 @@ A robust, secure, and production-ready RESTful API for managing library resource
 
 ---
 
-## 🚀 Installation & Local Setup
+## Installation & Local Setup
 
 ### 1. Clone the Repository
 ```bash
@@ -86,7 +86,7 @@ The API is accessible at: `http://127.0.0.1:8000`
 
 ---
 
-## 📬 Postman Collection
+##  Postman Collection
 
 A complete, ready-to-test Postman collection is included in this repository:
 - **File**: `Library_Management_API.postman_collection.json`
@@ -99,7 +99,7 @@ A complete, ready-to-test Postman collection is included in this repository:
 
 ---
 
-## 📖 API Endpoints Reference
+##  API Endpoints Reference
 
 Base URL: `http://127.0.0.1:8000/api`
 
@@ -137,7 +137,7 @@ Base URL: `http://127.0.0.1:8000/api`
 
 ---
 
-## 🔒 Standardized Response Format
+##  Standardized Response Format
 
 ### Success Response
 ```json
