@@ -1,59 +1,165 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Library Management RESTful API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
+[![Authentication](https://img.shields.io/badge/Auth-Laravel_Sanctum-red?style=for-the-badge)](https://laravel.com/docs/sanctum)
 
-## About Laravel
+A robust, secure, and production-ready RESTful API for managing library resources, book catalogs, categories, and borrowing transactions built with Laravel 12.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🌟 Key Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. **Authentication (Laravel Sanctum)**
+   - User Registration & Login with Bearer Token generation.
+   - Secure Logout (Token Revocation).
+   - Protected API routes with unified JSON exception handling.
 
-## Learning Laravel
+2. **Category Management (CRUD)**
+   - Full CRUD support for book categories.
+   - Built-in data integrity: prevents deleting categories that still have associated books.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+3. **Book Management (CRUD)**
+   - Complete catalog management: Title, Author, ISBN, Stock, and Category association.
+   - Dynamic search by title, author, or ISBN.
+   - Filter books by category.
+   - Active borrowing protection: prevents deleting books that are currently on loan.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+4. **Borrowing & Returning System**
+   - **Concurrency-Safe Stock Management**: Uses database transactions (`DB::beginTransaction()`) and pessimistic locking (`lockForUpdate()`) to prevent race conditions during book borrowing.
+   - **Automatic Stock Adjustments**: Stock decrements by 1 on borrow, and increments by 1 on return.
+   - **Validation Rules**: Borrowing date validation (`due_date` must be a future date) and prevention of duplicate returns.
+   - **Filterable Transaction History**: View borrowed books with optional status filtering (`borrowed` / `returned`).
 
-## Laravel Sponsors
+5. **Standardized API Response Pattern**
+   - Unified JSON structure across all endpoints (`status`, `message`, `data`, and pagination metadata) implemented via `ApiResponse` trait.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## 🏗️ Architecture & Database Schema
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```
+[ users ] 1 --- * [ borrowings ] * --- 1 [ books ] * --- 1 [ categories ]
+```
 
-## Contributing
+- **`users`**: `id`, `name`, `email`, `password`, `timestamps`
+- **`categories`**: `id`, `name`, `description`, `timestamps`
+- **`books`**: `id`, `category_id` (FK), `title`, `author`, `isbn`, `stock`, `timestamps`
+- **`borrowings`**: `id`, `user_id` (FK), `book_id` (FK), `borrowed_at`, `due_date`, `returned_at`, `status` (`borrowed`, `returned`), `timestamps`
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## 🚀 Installation & Local Setup
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 1. Clone the Repository
+```bash
+git clone https://github.com/your-username/library_management_api.git
+cd library_management_api
+```
 
-## Security Vulnerabilities
+### 2. Install Dependencies
+```bash
+composer install
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 3. Environment Configuration
+Copy `.env.example` to `.env`:
+```bash
+cp .env.example .env
+```
+Generate the application key:
+```bash
+php artisan key:generate
+```
 
-## License
+### 4. Database Setup & Migrations
+Create your database or use SQLite:
+```bash
+php artisan migrate
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 5. Run the Server
+```bash
+php artisan serve
+```
+The API is accessible at: `http://127.0.0.1:8000`
+
+---
+
+## 📬 Postman Collection
+
+A complete, ready-to-test Postman collection is included in this repository:
+- **File**: `Library_Management_API.postman_collection.json`
+
+### How to Import to Postman:
+1. Open Postman.
+2. Click the **Import** button (top-left).
+3. Drag & drop the `Library_Management_API.postman_collection.json` file.
+4. Set the `Bearer Token` in the Authorization tab from the Register/Login response.
+
+---
+
+## 📖 API Endpoints Reference
+
+Base URL: `http://127.0.0.1:8000/api`
+
+### 1. Authentication
+| Method | Endpoint | Description | Auth Required |
+| :--- | :--- | :--- | :---: |
+| `POST` | `/register` | Register new user | ❌ |
+| `POST` | `/login` | User login and receive token | ❌ |
+| `POST` | `/logout` | Invalidate current token | ✅ |
+
+### 2. Categories
+| Method | Endpoint | Description | Auth Required |
+| :--- | :--- | :--- | :---: |
+| `GET` | `/categories` | List all categories with book count | ✅ |
+| `POST` | `/categories` | Create a new category | ✅ |
+| `GET` | `/categories/{id}` | Detail of a category with its books | ✅ |
+| `PUT` | `/categories/{id}` | Update category | ✅ |
+| `DELETE`| `/categories/{id}` | Delete category (safe delete) | ✅ |
+
+### 3. Books
+| Method | Endpoint | Description | Auth Required |
+| :--- | :--- | :--- | :---: |
+| `GET` | `/books` | List books (supports `?search=` and `?category_id=`) | ✅ |
+| `POST` | `/books` | Create a new book | ✅ |
+| `GET` | `/books/{id}` | Get detail of a specific book | ✅ |
+| `PUT` | `/books/{id}` | Update book details / stock | ✅ |
+| `DELETE`| `/books/{id}` | Delete book (safe delete) | ✅ |
+
+### 4. Borrowings & Returns
+| Method | Endpoint | Description | Auth Required |
+| :--- | :--- | :--- | :---: |
+| `GET` | `/borrowings` | List all borrowings (supports `?status=borrowed`) | ✅ |
+| `POST` | `/borrowings` | Borrow a book (requires `book_id`, `due_date`) | ✅ |
+| `POST` | `/borrowings/{id}/return` | Return a borrowed book | ✅ |
+
+---
+
+## 🔒 Standardized Response Format
+
+### Success Response
+```json
+{
+    "status": "success",
+    "message": "Book borrowed successfully",
+    "data": {
+        "id": 1,
+        "user_id": 1,
+        "book_id": 2,
+        "borrowed_at": "2026-11-14",
+        "due_date": "2026-11-21",
+        "status": "borrowed"
+    }
+}
+```
+
+### Error Response
+```json
+{
+    "status": "error",
+    "message": "Cannot delete book that is currently being borrowed",
+    "data": null
+}
+```
